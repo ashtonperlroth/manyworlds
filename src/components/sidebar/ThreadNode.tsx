@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { ChevronRight, GitBranch, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ChevronRight, GitBranch, MoreHorizontal, Pencil, Trash2, Loader2 } from 'lucide-react';
 import type { ThreadTreeNode } from '@/types/conversation';
 import { getRelativeTime } from '@/lib/utils';
 import ModelBadge from '@/components/ui/ModelBadge';
-import { useConversationStore } from '@/lib/store/conversation-store';
+import { useConversationStore, materializeThread } from '@/lib/store/conversation-store';
+import { useSettingsStore } from '@/lib/store/settings-store';
+import { useSummariesStore, generateForkSummary } from '@/lib/store/summaries-store';
+import { useReferencesStore } from '@/lib/store/references-store';
 
 interface ThreadNodeProps {
   node: ThreadTreeNode;
@@ -20,26 +23,76 @@ export default function ThreadNode({ node, activeThreadId, depth = 0 }: ThreadNo
   const [showMenu, setShowMenu] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(node.name);
+  const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number } | null>(null);
   const renameRef = useRef<HTMLInputElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const switchThread = useConversationStore((s) => s.switchThread);
   const renameThread = useConversationStore((s) => s.renameThread);
   const deleteThread = useConversationStore((s) => s.deleteThread);
+  const trees = useConversationStore((s) => s.trees);
+  const activeTreeId = useConversationStore((s) => s.activeTreeId);
+  const apiKeys = useSettingsStore((s) => s.apiKeys);
+
+  const summaryKey = activeTreeId ? `${activeTreeId}:${node.threadId}` : '';
+  const summary = useSummariesStore((s) => s.getSummary(summaryKey));
+  const isGenerating = useSummariesStore((s) => s.isGenerating(summaryKey));
+  const backlinks = useReferencesStore((s) => s.getBacklinks(summaryKey));
 
   const isActive = activeThreadId === node.threadId;
   const hasChildren = node.children.length > 0;
   const depthColor = DEPTH_COLORS[Math.min(depth, DEPTH_COLORS.length - 1)];
 
   const handleRenameSubmit = () => {
-    if (renameValue.trim()) {
-      renameThread(node.threadId, renameValue.trim());
-    }
+    if (renameValue.trim()) renameThread(node.threadId, renameValue.trim());
     setRenaming(false);
   };
+
+  const handleMouseEnter = () => {
+    if (node.isRoot) return; // don't summarize root thread
+    const rect = rowRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    hoverTimerRef.current = setTimeout(() => {
+      setTooltipPos({ top: rect.top, left: rect.right + 8 });
+
+      // Trigger summary generation if not already cached
+      if (!activeTreeId) return;
+      const tree = trees[activeTreeId];
+      if (!tree) return;
+      const fork = tree.forks[node.threadId];
+      if (!fork) return;
+      const { provider, model } = fork.modelConfig;
+      const apiKey = apiKeys[provider];
+      if (!apiKey) return;
+
+      const materialized = materializeThread(tree, node.threadId);
+      const messages = materialized.nodes
+        .filter((n) => n.role !== 'system' && !n.isStreaming)
+        .map((n) => ({ role: n.role, content: n.content }));
+
+      generateForkSummary(summaryKey, messages, provider, model, apiKey);
+    }, 600);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    setTooltipPos(null);
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    };
+  }, []);
+
+  const showTooltip = !!tooltipPos && !node.isRoot;
 
   return (
     <div>
       <div
+        ref={rowRef}
         className={`group relative flex items-center gap-1.5 px-2 py-1.5 rounded-lg cursor-pointer transition-colors select-none ${
           isActive
             ? 'bg-accent-primary/10 border-l-2 border-accent-primary'
@@ -47,6 +100,8 @@ export default function ThreadNode({ node, activeThreadId, depth = 0 }: ThreadNo
         }`}
         style={{ paddingLeft: depth > 0 ? `${depth * 12 + 8}px` : undefined }}
         onClick={() => switchThread(node.threadId)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {/* Expand/collapse toggle */}
         {hasChildren ? (
@@ -99,11 +154,7 @@ export default function ThreadNode({ node, activeThreadId, depth = 0 }: ThreadNo
             </span>
           )}
           <div className="flex items-center gap-1.5 mt-0.5">
-            <ModelBadge
-              provider={node.modelConfig.provider}
-              model={node.modelConfig.model}
-              size="xs"
-            />
+            <ModelBadge provider={node.modelConfig.provider} model={node.modelConfig.model} size="xs" />
             <span className="text-[10px] text-text-tertiary">{getRelativeTime(node.updatedAt)}</span>
           </div>
         </div>
@@ -122,13 +173,41 @@ export default function ThreadNode({ node, activeThreadId, depth = 0 }: ThreadNo
         )}
       </div>
 
+      {/* Summary tooltip — rendered at fixed viewport position */}
+      {showTooltip && (
+        <div
+          className="fixed z-[60] w-64 bg-bg-primary border border-accent-muted/40 rounded-xl shadow-warm-xl p-3 pointer-events-none animate-fade-in-up"
+          style={{ top: tooltipPos!.top, left: tooltipPos!.left }}
+        >
+          <p className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
+            Fork Summary
+          </p>
+          {isGenerating ? (
+            <div className="flex items-center gap-1.5 text-xs text-text-tertiary">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Generating…
+            </div>
+          ) : summary ? (
+            <p className="text-xs text-text-primary leading-relaxed">{summary}</p>
+          ) : (
+            <p className="text-xs text-text-tertiary italic">
+              Hover to generate summary (needs API key)
+            </p>
+          )}
+          {backlinks.length > 0 && (
+            <div className="mt-2 pt-2 border-t border-accent-muted/20">
+              <p className="text-[10px] text-text-tertiary">
+                Referenced by {backlinks.length} conversation{backlinks.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Context menu */}
       {showMenu && (
         <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setShowMenu(false)}
-          />
+          <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
           <div className="absolute right-2 z-50 bg-bg-primary border border-accent-muted/40 rounded-lg shadow-warm-lg py-1 min-w-[120px]">
             <button
               className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-text-secondary hover:bg-bg-tertiary transition-colors"

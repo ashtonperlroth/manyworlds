@@ -1,14 +1,15 @@
 'use client';
 
-import { Settings, Menu, GitBranch } from 'lucide-react';
+import { Settings, Menu, GitBranch, Network } from 'lucide-react';
 import { useSettingsStore } from '@/lib/store/settings-store';
 import { useConversationStore } from '@/lib/store/conversation-store';
 
 interface TopbarProps {
   onSettings(): void;
+  onTreeViz(): void;
 }
 
-export default function Topbar({ onSettings }: TopbarProps) {
+export default function Topbar({ onSettings, onTreeViz }: TopbarProps) {
   const toggleSidebar = useSettingsStore((s) => s.toggleSidebar);
   const activeTreeId = useConversationStore((s) => s.activeTreeId);
   const activeThreadId = useConversationStore((s) => s.activeThreadId);
@@ -77,13 +78,22 @@ export default function Topbar({ onSettings }: TopbarProps) {
         )}
       </div>
 
-      <button
-        onClick={onSettings}
-        className="p-1.5 rounded-lg text-text-tertiary hover:text-text-secondary hover:bg-bg-tertiary transition-colors"
-        title="Settings (⌘,)"
-      >
-        <Settings className="w-4 h-4" />
-      </button>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={onTreeViz}
+          className="p-1.5 rounded-lg text-text-tertiary hover:text-text-secondary hover:bg-bg-tertiary transition-colors"
+          title="Fork graph (⌘G)"
+        >
+          <Network className="w-4 h-4" />
+        </button>
+        <button
+          onClick={onSettings}
+          className="p-1.5 rounded-lg text-text-tertiary hover:text-text-secondary hover:bg-bg-tertiary transition-colors"
+          title="Settings (⌘,)"
+        >
+          <Settings className="w-4 h-4" />
+        </button>
+      </div>
     </header>
   );
 }

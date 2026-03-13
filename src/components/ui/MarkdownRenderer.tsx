@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import type { Components } from 'react-markdown';
+import { useConversationStore } from '@/lib/store/conversation-store';
 
 // Dark forest theme matching --code-bg / --code-text
 const codeTheme: Record<string, React.CSSProperties> = {
@@ -38,51 +39,84 @@ const codeTheme: Record<string, React.CSSProperties> = {
   'attr-value': { color: '#8FC490' },
 };
 
+/** Convert [[Name|treeId:threadId]] to a markdown link with custom scheme */
+function processReferences(content: string): string {
+  return content.replace(
+    /\[\[([^\]|]+)\|([^\]]+)\]\]/g,
+    (_, name: string, key: string) => `[↗ ${name}](mw-ref://${key})`
+  );
+}
+
 interface MarkdownRendererProps {
   content: string;
 }
 
-const components: Components = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  code({ className, children, ...props }: any) {
-    const match = /language-(\w+)/.exec(className || '');
-    const isInline = !match;
-
-    if (isInline) {
+// Components factory — produces the components object with navigation access
+function makeComponents(): Components {
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    code({ className, children, ...props }: any) {
+      const match = /language-(\w+)/.exec(className || '');
+      if (!match) {
+        return (
+          <code className={className} {...props}>
+            {children}
+          </code>
+        );
+      }
       return (
-        <code className={className} {...props}>
-          {children}
-        </code>
+        <SyntaxHighlighter
+          style={codeTheme}
+          language={match[1]}
+          PreTag="div"
+          customStyle={{ margin: 0, borderRadius: '0.75rem' }}
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
       );
-    }
+    },
 
-    return (
-      <SyntaxHighlighter
-        style={codeTheme}
-        language={match[1]}
-        PreTag="div"
-        customStyle={{ margin: 0, borderRadius: '0.75rem' }}
-      >
-        {String(children).replace(/\n$/, '')}
-      </SyntaxHighlighter>
-    );
-  },
-  a({ href, children }) {
-    return (
-      <a href={href} target="_blank" rel="noopener noreferrer">
-        {children}
-      </a>
-    );
-  },
-};
+    a({ href, children }) {
+      if (href?.startsWith('mw-ref://')) {
+        const key = href.slice('mw-ref://'.length);
+        const colonIdx = key.indexOf(':');
+        const treeId = colonIdx >= 0 ? key.slice(0, colonIdx) : key;
+        const threadId = colonIdx >= 0 ? key.slice(colonIdx + 1) : null;
+
+        return (
+          <button
+            onClick={() => {
+              const s = useConversationStore.getState();
+              s.switchTree(treeId);
+              if (threadId) s.switchThread(threadId);
+            }}
+            className="inline-flex items-center gap-0.5 font-medium underline underline-offset-2 transition-colors"
+            style={{ color: 'var(--accent-secondary)' }}
+            title={`Navigate to ${key}`}
+          >
+            {children}
+          </button>
+        );
+      }
+      return (
+        <a href={href} target="_blank" rel="noopener noreferrer">
+          {children}
+        </a>
+      );
+    },
+  };
+}
+
+const components = makeComponents();
 
 export const MarkdownRenderer = memo(function MarkdownRenderer({
   content,
 }: MarkdownRendererProps) {
+  const processed = processReferences(content);
   return (
     <div className="markdown-content">
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-        {content}
+        {processed}
       </ReactMarkdown>
     </div>
   );

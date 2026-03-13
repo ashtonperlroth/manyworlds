@@ -7,9 +7,11 @@ import Topbar from './Topbar';
 import Sidebar from './sidebar/Sidebar';
 import ChatArea from './chat/ChatArea';
 import SettingsPanel from './settings/SettingsPanel';
+import TreeVisualization from './tree/TreeVisualization';
 
 export default function MainLayout() {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [treeVizOpen, setTreeVizOpen] = useState(false);
   const hydrate = useConversationStore((s) => s.hydrate);
   const sidebarOpen = useSettingsStore((s) => s.sidebarOpen);
   const theme = useSettingsStore((s) => s.theme);
@@ -71,6 +73,11 @@ export default function MainLayout() {
           setSettingsOpen((v) => !v);
           break;
         }
+        case 'g': {
+          e.preventDefault();
+          setTreeVizOpen((v) => !v);
+          break;
+        }
       }
     };
 
@@ -80,7 +87,10 @@ export default function MainLayout() {
 
   return (
     <div className="flex flex-col h-screen bg-bg-primary overflow-hidden">
-      <Topbar onSettings={() => setSettingsOpen(true)} />
+      <Topbar
+        onSettings={() => setSettingsOpen(true)}
+        onTreeViz={() => setTreeVizOpen(true)}
+      />
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
@@ -102,8 +112,8 @@ export default function MainLayout() {
         </main>
       </div>
 
-      {/* Settings panel */}
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
+      {treeVizOpen && <TreeVisualization onClose={() => setTreeVizOpen(false)} />}
     </div>
   );
 }
