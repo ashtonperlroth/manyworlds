@@ -38,7 +38,8 @@ export default function ThreadNode({ node, activeThreadId, depth = 0 }: ThreadNo
   const summaryKey = activeTreeId ? `${activeTreeId}:${node.threadId}` : '';
   const summary = useSummariesStore((s) => s.getSummary(summaryKey));
   const isGenerating = useSummariesStore((s) => s.isGenerating(summaryKey));
-  const backlinks = useReferencesStore((s) => s.getBacklinks(summaryKey));
+  const rawBacklinks = useReferencesStore((s) => s.backlinks[summaryKey]);
+  const backlinks = rawBacklinks ?? [];
 
   const isActive = activeThreadId === node.threadId;
   const hasChildren = node.children.length > 0;
