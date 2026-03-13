@@ -14,6 +14,13 @@ export default function MainLayout() {
   const sidebarOpen = useSettingsStore((s) => s.sidebarOpen);
   const theme = useSettingsStore((s) => s.theme);
 
+  // On mobile, close sidebar by default
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      useSettingsStore.getState().setSidebarOpen(false);
+    }
+  }, []);
+
   // Apply theme to html element
   useEffect(() => {
     const html = document.documentElement;
