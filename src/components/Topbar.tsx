@@ -10,20 +10,22 @@ interface TopbarProps {
 
 export default function Topbar({ onSettings }: TopbarProps) {
   const toggleSidebar = useSettingsStore((s) => s.toggleSidebar);
-  const activeThread = useConversationStore((s) => s.getActiveThread());
   const activeTreeId = useConversationStore((s) => s.activeTreeId);
+  const activeThreadId = useConversationStore((s) => s.activeThreadId);
   const trees = useConversationStore((s) => s.trees);
 
-  // Build breadcrumb
+  // Build breadcrumb from stable primitives (avoid calling getActiveThread()
+  // inside a selector — it returns a new object every time and causes an
+  // infinite re-render loop via useSyncExternalStore snapshot comparison)
   const breadcrumbs: string[] = [];
-  if (activeThread && activeTreeId) {
+  if (activeTreeId && activeThreadId) {
     const tree = trees[activeTreeId];
     if (tree) {
       breadcrumbs.push(tree.rootThread.name);
-      if (!activeThread.isRoot) {
-        // Walk up the fork chain
+      const isRoot = activeThreadId === tree.rootThread.threadId;
+      if (!isRoot) {
         const chain: string[] = [];
-        let threadId = activeThread.threadId;
+        let threadId = activeThreadId;
         while (threadId && threadId !== tree.rootThread.threadId) {
           const fork = tree.forks[threadId];
           if (!fork) break;
