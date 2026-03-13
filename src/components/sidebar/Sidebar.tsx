@@ -14,7 +14,7 @@ export default function Sidebar() {
   const createConversation = useConversationStore((s) => s.createConversation);
   const switchTree = useConversationStore((s) => s.switchTree);
   const deleteConversation = useConversationStore((s) => s.deleteConversation);
-  const getThreadTree = useConversationStore((s) => s.getThreadTree);
+  const threadTree = useConversationStore((s) => s.getThreadTree());
 
   const defaultModel = useSettingsStore((s) => s.defaultModel);
 
@@ -54,8 +54,6 @@ export default function Sidebar() {
 
         {sortedTrees.map((tree) => {
           const isActive = tree.id === activeTreeId;
-          const threadTree =
-            isActive && activeTreeId === tree.id ? getThreadTree() : null;
 
           // Count total messages
           const msgCount = Object.values(tree.nodes).filter(

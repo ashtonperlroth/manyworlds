@@ -14,13 +14,12 @@ interface ChatAreaProps {
 
 export default function ChatArea({ isMobile = false }: ChatAreaProps) {
   const [forkingNodeId, setForkingNodeId] = useState<string | null>(null);
-  const getActiveThread = useConversationStore((s) => s.getActiveThread);
+  // Call getActiveThread() inside selector so we re-render on every message update
+  const thread = useConversationStore((s) => s.getActiveThread());
   const activeTreeId = useConversationStore((s) => s.activeTreeId);
   const activeThreadId = useConversationStore((s) => s.activeThreadId);
   const createConversation = useConversationStore((s) => s.createConversation);
   const defaultModel = useSettingsStore((s) => s.defaultModel);
-
-  const thread = getActiveThread();
 
   if (!activeTreeId || !thread) {
     return (
