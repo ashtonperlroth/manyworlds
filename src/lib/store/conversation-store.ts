@@ -110,7 +110,7 @@ export function materializeThread(
   };
 }
 
-function buildThreadTree(tree: ConversationTree): ThreadTreeNode {
+export function buildThreadTree(tree: ConversationTree): ThreadTreeNode {
   function buildNode(threadId: ThreadId): ThreadTreeNode {
     const isRoot = threadId === tree.rootThread.threadId;
     const threadMeta = isRoot ? tree.rootThread : tree.forks[threadId];

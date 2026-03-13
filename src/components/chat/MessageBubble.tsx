@@ -49,14 +49,14 @@ export default function MessageBubble({
       <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
         {isUser && (
           <div className="max-w-[70%] px-4 py-2.5 rounded-message bg-accent-primary text-text-inverse shadow-warm">
-            <p className="font-body text-sm leading-relaxed whitespace-pre-wrap">{node.content}</p>
+            <p className="font-body text-[16px] leading-relaxed whitespace-pre-wrap">{node.content}</p>
           </div>
         )}
 
         {isAssistant && (
           <div className="max-w-[80%] px-4 py-3 rounded-message bg-bg-tertiary text-text-primary shadow-warm">
             {node.isStreaming && !node.content ? (
-              <span className="streaming-cursor text-text-tertiary text-sm"> </span>
+              <span className="streaming-cursor text-text-tertiary text-[16px]"> </span>
             ) : (
               <>
                 <MarkdownRenderer content={node.content} />

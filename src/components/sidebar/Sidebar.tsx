@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Plus, Trash2, MoreHorizontal, MessageSquare } from 'lucide-react';
-import { useConversationStore } from '@/lib/store/conversation-store';
+import { useConversationStore, buildThreadTree } from '@/lib/store/conversation-store';
 import { useSettingsStore } from '@/lib/store/settings-store';
 import ThreadTree from './ThreadTree';
 import { getRelativeTime, truncate } from '@/lib/utils';
@@ -14,7 +14,13 @@ export default function Sidebar() {
   const createConversation = useConversationStore((s) => s.createConversation);
   const switchTree = useConversationStore((s) => s.switchTree);
   const deleteConversation = useConversationStore((s) => s.deleteConversation);
-  const threadTree = useConversationStore((s) => s.getThreadTree());
+  // Compute derived thread tree in useMemo to avoid infinite re-renders
+  const threadTree = useMemo(() => {
+    if (!activeTreeId) return null;
+    const tree = trees[activeTreeId];
+    if (!tree) return null;
+    return buildThreadTree(tree);
+  }, [trees, activeTreeId]);
 
   const defaultModel = useSettingsStore((s) => s.defaultModel);
 

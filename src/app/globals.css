@@ -85,6 +85,7 @@
 
 @layer base {
   html {
+    font-size: 16px;
     font-family: "Source Sans 3", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -125,6 +126,10 @@
 
 @layer components {
   /* Markdown content inside messages */
+  .markdown-content {
+    font-size: 16px;
+  }
+
   .markdown-content h1,
   .markdown-content h2,
   .markdown-content h3 {
