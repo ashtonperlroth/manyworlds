@@ -1,11 +1,28 @@
-/**
- * Utility functions for Many Worlds.
- * 
- * TODO: Implement the following:
- * - generateId(): string — use nanoid to generate unique IDs for nodes/threads/trees
- * - timestamp(): number — current Unix ms timestamp
- * - truncate(str, maxLen): string — truncate with ellipsis for preview text
- * - getRelativeTime(timestamp): string — "2m ago", "1h ago", "yesterday", etc.
- */
+export function generateId(): string {
+  return crypto.randomUUID();
+}
 
-export {};
+export function timestamp(): number {
+  return Date.now();
+}
+
+export function truncate(str: string, maxLen: number): string {
+  if (str.length <= maxLen) return str;
+  return str.slice(0, maxLen) + '…';
+}
+
+export function getRelativeTime(ts: number): string {
+  const diff = Date.now() - ts;
+  const seconds = Math.floor(diff / 1000);
+  if (seconds < 60) return 'just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+export function cn(...classes: (string | undefined | false | null)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
