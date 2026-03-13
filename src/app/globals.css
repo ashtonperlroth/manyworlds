@@ -1,0 +1,241 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Many Worlds — Design Token Layer
+ * 
+ * All colors are defined as CSS custom properties so they can be swapped
+ * for dark mode via the .dark class on <html>.
+ */
+
+:root {
+  /* Background tiers */
+  --bg-primary: #FAF7F2;
+  --bg-secondary: #F3EDE4;
+  --bg-tertiary: #EBE3D7;
+  --bg-inverse: #2C3830;
+
+  /* Text */
+  --text-primary: #2C3830;
+  --text-secondary: #5C6B62;
+  --text-tertiary: #8B9A8F;
+  --text-inverse: #FAF7F2;
+
+  /* Accents */
+  --accent-primary: #4A7C59;
+  --accent-hover: #3D6B4A;
+  --accent-secondary: #8B6F47;
+  --accent-tertiary: #C4956A;
+  --accent-muted: #D4C5A9;
+
+  /* Semantic — Forking */
+  --fork-indicator: #6B8F71;
+  --active-branch: #4A7C59;
+  --parent-branch: #8B6F47;
+
+  /* Fork depth colors */
+  --depth-1: #4A7C59;
+  --depth-2: #8B6F47;
+  --depth-3: #7B6B8A;
+  --depth-4: #8A6B6B;
+
+  /* Code blocks */
+  --code-bg: #2C3830;
+  --code-text: #E8E0D4;
+
+  /* Shadows (used via Tailwind shadow-warm, etc.) */
+  --shadow-color: 139, 111, 71;
+}
+
+/* Dark theme — swap the palette */
+.dark {
+  --bg-primary: #1A2420;
+  --bg-secondary: #222E28;
+  --bg-tertiary: #2C3830;
+  --bg-inverse: #FAF7F2;
+
+  --text-primary: #E8E0D4;
+  --text-secondary: #A8B5AC;
+  --text-tertiary: #6B7A70;
+  --text-inverse: #2C3830;
+
+  --accent-primary: #6B9F7A;
+  --accent-hover: #7DB38C;
+  --accent-secondary: #C4956A;
+  --accent-tertiary: #D4A97A;
+  --accent-muted: #3D4A42;
+
+  --fork-indicator: #7DAF85;
+  --active-branch: #6B9F7A;
+  --parent-branch: #C4956A;
+
+  --depth-1: #6B9F7A;
+  --depth-2: #C4956A;
+  --depth-3: #9B8BAA;
+  --depth-4: #AA8B8B;
+
+  --code-bg: #141C18;
+  --code-text: #E8E0D4;
+
+  --shadow-color: 0, 0, 0;
+}
+
+/* ─── Base Styles ─── */
+
+@layer base {
+  html {
+    font-family: "Source Sans 3", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-bg-primary text-text-primary;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent-muted);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: var(--accent-primary);
+    color: var(--text-inverse);
+  }
+}
+
+/* ─── Component Styles ─── */
+
+@layer components {
+  /* Markdown content inside messages */
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3 {
+    font-family: "Newsreader", Georgia, serif;
+    @apply text-text-primary;
+  }
+
+  .markdown-content h1 { @apply text-2xl font-semibold mt-6 mb-3; }
+  .markdown-content h2 { @apply text-xl font-semibold mt-5 mb-2; }
+  .markdown-content h3 { @apply text-lg font-semibold mt-4 mb-2; }
+
+  .markdown-content p {
+    @apply mb-3 leading-relaxed;
+  }
+
+  .markdown-content ul,
+  .markdown-content ol {
+    @apply mb-3 pl-6;
+  }
+
+  .markdown-content ul { @apply list-disc; }
+  .markdown-content ol { @apply list-decimal; }
+
+  .markdown-content li {
+    @apply mb-1;
+  }
+
+  .markdown-content blockquote {
+    @apply pl-4 my-3 italic text-text-secondary;
+    border-left: 3px solid var(--accent-secondary);
+  }
+
+  .markdown-content code:not(pre code) {
+    @apply px-1.5 py-0.5 rounded text-sm;
+    background: var(--bg-tertiary);
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+  }
+
+  .markdown-content pre {
+    @apply rounded-xl my-3 p-4 overflow-x-auto text-sm;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+  }
+
+  .markdown-content a {
+    @apply underline underline-offset-2;
+    color: var(--accent-secondary);
+  }
+
+  .markdown-content a:hover {
+    color: var(--accent-primary);
+  }
+
+  .markdown-content hr {
+    @apply my-6;
+    border-color: var(--accent-muted);
+    opacity: 0.4;
+  }
+
+  .markdown-content table {
+    @apply w-full my-3 text-sm;
+    border-collapse: collapse;
+  }
+
+  .markdown-content th,
+  .markdown-content td {
+    @apply px-3 py-2 text-left;
+    border-bottom: 1px solid var(--accent-muted);
+  }
+
+  .markdown-content th {
+    @apply font-semibold text-text-secondary;
+  }
+}
+
+/* ─── Utility Classes ─── */
+
+@layer utilities {
+  .shadow-warm {
+    box-shadow: 0 2px 12px rgba(var(--shadow-color), 0.08);
+  }
+
+  .shadow-warm-lg {
+    box-shadow: 0 4px 24px rgba(var(--shadow-color), 0.12);
+  }
+
+  .shadow-warm-xl {
+    box-shadow: 0 8px 40px rgba(var(--shadow-color), 0.16);
+  }
+
+  /* Inherited message styling (before fork point) */
+  .message-inherited {
+    opacity: 0.7;
+    border-left: 2px solid var(--parent-branch);
+    padding-left: 0.75rem;
+  }
+
+  /* Active branch indicator */
+  .branch-active {
+    border-left: 2px solid var(--active-branch);
+  }
+
+  /* Streaming cursor */
+  .streaming-cursor::after {
+    content: "▋";
+    animation: blink 1s step-end infinite;
+    color: var(--accent-primary);
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+}
