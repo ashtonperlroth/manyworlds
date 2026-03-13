@@ -147,7 +147,7 @@ export default function InputBar({ threadId, provider, model }: InputBarProps) {
             placeholder="Send a message… (Enter to send, Shift+Enter for newline, [[ to reference)"
             rows={1}
             disabled={isStreaming}
-            className="w-full resize-none bg-bg-secondary border border-accent-muted/40 rounded-xl px-4 py-2.5 text-sm font-body text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent-primary/60 transition-colors leading-relaxed disabled:opacity-60"
+            className="w-full resize-none bg-bg-secondary border border-accent-muted/40 rounded-xl px-4 py-2.5 text-base font-body text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent-primary/60 transition-colors leading-relaxed disabled:opacity-60"
             style={{ minHeight: '42px', maxHeight: '200px' }}
           />
         </div>
@@ -172,7 +172,7 @@ export default function InputBar({ threadId, provider, model }: InputBarProps) {
           </button>
         )}
       </div>
-      <p className="text-center text-[10px] text-text-tertiary mt-2 font-body">
+      <p className="text-center text-xs text-text-tertiary mt-2 font-body">
         ⌘K fork · ⌘G graph · ⌘N new · ⌘, settings · [[ to reference
       </p>
     </div>

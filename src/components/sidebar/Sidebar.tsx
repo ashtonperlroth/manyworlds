@@ -36,12 +36,12 @@ export default function Sidebar() {
     <aside className="flex flex-col h-full bg-bg-secondary border-r border-accent-muted/30">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-accent-muted/20">
-        <span className="font-body text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+        <span className="font-body text-sm font-semibold text-text-tertiary uppercase tracking-wider">
           Conversations
         </span>
         <button
           onClick={handleNew}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-text-secondary hover:text-accent-primary hover:bg-bg-tertiary transition-colors"
+          className="flex items-center gap-1 px-2 py-1 rounded-lg text-sm text-text-secondary hover:text-accent-primary hover:bg-bg-tertiary transition-colors"
           title="New conversation (⌘N)"
         >
           <Plus className="w-3.5 h-3.5" />
@@ -54,7 +54,7 @@ export default function Sidebar() {
         {sortedTrees.length === 0 && (
           <div className="flex flex-col items-center justify-center py-8 gap-2">
             <MessageSquare className="w-6 h-6 text-text-tertiary" strokeWidth={1.5} />
-            <p className="text-xs text-text-tertiary text-center">No conversations yet</p>
+            <p className="text-sm text-text-tertiary text-center">No conversations yet</p>
           </div>
         )}
 
@@ -89,7 +89,7 @@ export default function Sidebar() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1">
                     <span
-                      className={`text-xs font-semibold font-body truncate ${
+                      className={`text-sm font-semibold font-body truncate ${
                         isActive ? 'text-text-primary' : 'text-text-secondary'
                       }`}
                     >
@@ -97,7 +97,7 @@ export default function Sidebar() {
                     </span>
                     <div className="flex items-center gap-1 flex-shrink-0">
                       {msgCount > 0 && (
-                        <span className="text-[10px] text-text-tertiary">{msgCount}</span>
+                        <span className="text-xs text-text-tertiary">{msgCount}</span>
                       )}
                       <button
                         onClick={(e) => {
@@ -110,10 +110,10 @@ export default function Sidebar() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-[11px] text-text-tertiary truncate mt-0.5 leading-snug">
+                  <p className="text-xs text-text-tertiary truncate mt-0.5 leading-snug">
                     {preview}
                   </p>
-                  <p className="text-[10px] text-text-tertiary mt-0.5">
+                  <p className="text-xs text-text-tertiary mt-0.5">
                     {getRelativeTime(tree.updatedAt)}
                   </p>
                 </div>
@@ -125,7 +125,7 @@ export default function Sidebar() {
                   <div className="fixed inset-0 z-40" onClick={() => setMenuOpenFor(null)} />
                   <div className="absolute right-2 top-8 z-50 bg-bg-primary border border-accent-muted/40 rounded-lg shadow-warm-lg py-1 min-w-[130px]">
                     <button
-                      className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-red-500 hover:bg-bg-tertiary transition-colors"
+                      className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-red-500 hover:bg-bg-tertiary transition-colors"
                       onClick={() => {
                         deleteConversation(tree.id);
                         setMenuOpenFor(null);

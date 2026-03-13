@@ -65,7 +65,7 @@ export default function Topbar({ onSettings, onTreeViz }: TopbarProps) {
 
         {/* Breadcrumb */}
         {breadcrumbs.length > 0 && (
-          <div className="hidden sm:flex items-center gap-1 text-xs text-text-tertiary font-body ml-2">
+          <div className="hidden sm:flex items-center gap-1 text-sm text-text-tertiary font-body ml-2">
             {breadcrumbs.map((crumb, i) => (
               <span key={i} className="flex items-center gap-1">
                 {i > 0 && <span className="text-text-tertiary/50">›</span>}

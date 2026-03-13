@@ -76,13 +76,13 @@ export default function ForkDialog({
           </button>
         </div>
 
-        <p className="text-xs text-text-secondary mb-4 leading-relaxed">
+        <p className="text-sm text-text-secondary mb-4 leading-relaxed">
           Create a new branch from this message. The fork inherits all history up to this point.
         </p>
 
         {/* Name input */}
         <div className="mb-3">
-          <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
+          <label className="block text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
             Fork name (optional)
           </label>
           <input
@@ -92,13 +92,13 @@ export default function ForkDialog({
             onChange={(e) => setName(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Auto-named from first message"
-            className="w-full bg-bg-secondary border border-accent-muted/40 rounded-xl px-3 py-2 text-sm font-body text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent-primary/60 transition-colors"
+            className="w-full bg-bg-secondary border border-accent-muted/40 rounded-xl px-3 py-2 text-base font-body text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent-primary/60 transition-colors"
           />
         </div>
 
         {/* Model selector */}
         <div className="mb-5">
-          <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
+          <label className="block text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
             Model
           </label>
           <ModelSelector
@@ -115,13 +115,13 @@ export default function ForkDialog({
         <div className="flex items-center gap-2">
           <button
             onClick={onClose}
-            className="flex-1 py-2 rounded-xl border border-accent-muted/40 text-sm font-body font-semibold text-text-secondary hover:bg-bg-tertiary transition-colors"
+            className="flex-1 py-2 rounded-xl border border-accent-muted/40 text-base font-body font-semibold text-text-secondary hover:bg-bg-tertiary transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleFork}
-            className="flex-1 py-2 rounded-xl bg-accent-primary text-text-inverse text-sm font-body font-semibold hover:bg-accent-hover transition-colors shadow-warm"
+            className="flex-1 py-2 rounded-xl bg-accent-primary text-text-inverse text-base font-body font-semibold hover:bg-accent-hover transition-colors shadow-warm"
           >
             Fork
           </button>

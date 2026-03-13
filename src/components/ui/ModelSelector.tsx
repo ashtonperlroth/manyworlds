@@ -37,7 +37,7 @@ export default function ModelSelector({
         value={model}
         onChange={handleChange}
         className={`appearance-none bg-bg-secondary border border-accent-muted/40 rounded-lg text-text-secondary font-body cursor-pointer transition-colors hover:border-accent-muted focus:outline-none focus:border-accent-primary/60 ${
-          compact ? 'text-xs px-2 py-1 pr-6' : 'text-sm px-3 py-1.5 pr-8'
+          compact ? 'text-sm px-2 py-1 pr-6' : 'text-base px-3 py-1.5 pr-8'
         }`}
         style={{ minWidth: compact ? '100px' : '140px' }}
         title={`${PROVIDER_LABELS[provider]} — ${selectedLabel}`}
@@ -58,7 +58,7 @@ export default function ModelSelector({
       </select>
       <div
         className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-text-tertiary ${
-          compact ? 'text-[10px]' : 'text-xs'
+          compact ? 'text-xs' : 'text-sm'
         }`}
       >
         ▾

@@ -134,13 +134,13 @@ export default function ThreadNode({ node, activeThreadId, depth = 0 }: ThreadNo
                 if (e.key === 'Enter') handleRenameSubmit();
                 if (e.key === 'Escape') setRenaming(false);
               }}
-              className="w-full bg-transparent text-xs font-body text-text-primary border-b border-accent-primary focus:outline-none"
+              className="w-full bg-transparent text-sm font-body text-text-primary border-b border-accent-primary focus:outline-none"
               autoFocus
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
             <span
-              className={`block truncate text-xs font-body ${
+              className={`block truncate text-sm font-body ${
                 isActive ? 'text-text-primary font-semibold' : 'text-text-secondary'
               }`}
               onDoubleClick={(e) => {
@@ -179,24 +179,24 @@ export default function ThreadNode({ node, activeThreadId, depth = 0 }: ThreadNo
           className="fixed z-[60] w-64 bg-bg-primary border border-accent-muted/40 rounded-xl shadow-warm-xl p-3 pointer-events-none animate-fade-in-up"
           style={{ top: tooltipPos!.top, left: tooltipPos!.left }}
         >
-          <p className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
+          <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5">
             Fork Summary
           </p>
           {isGenerating ? (
-            <div className="flex items-center gap-1.5 text-xs text-text-tertiary">
+            <div className="flex items-center gap-1.5 text-sm text-text-tertiary">
               <Loader2 className="w-3 h-3 animate-spin" />
               Generating…
             </div>
           ) : summary ? (
-            <p className="text-xs text-text-primary leading-relaxed">{summary}</p>
+            <p className="text-sm text-text-primary leading-relaxed">{summary}</p>
           ) : (
-            <p className="text-xs text-text-tertiary italic">
+            <p className="text-sm text-text-tertiary italic">
               Hover to generate summary (needs API key)
             </p>
           )}
           {backlinks.length > 0 && (
             <div className="mt-2 pt-2 border-t border-accent-muted/20">
-              <p className="text-[10px] text-text-tertiary">
+              <p className="text-xs text-text-tertiary">
                 Referenced by {backlinks.length} conversation{backlinks.length !== 1 ? 's' : ''}
               </p>
             </div>
@@ -210,7 +210,7 @@ export default function ThreadNode({ node, activeThreadId, depth = 0 }: ThreadNo
           <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
           <div className="absolute right-2 z-50 bg-bg-primary border border-accent-muted/40 rounded-lg shadow-warm-lg py-1 min-w-[120px]">
             <button
-              className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-text-secondary hover:bg-bg-tertiary transition-colors"
+              className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-text-secondary hover:bg-bg-tertiary transition-colors"
               onClick={() => {
                 setRenaming(true);
                 setRenameValue(node.name);
@@ -222,7 +222,7 @@ export default function ThreadNode({ node, activeThreadId, depth = 0 }: ThreadNo
               Rename
             </button>
             <button
-              className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-red-500 hover:bg-bg-tertiary transition-colors"
+              className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-red-500 hover:bg-bg-tertiary transition-colors"
               onClick={() => {
                 deleteThread(node.threadId);
                 setShowMenu(false);
